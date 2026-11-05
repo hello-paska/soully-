@@ -294,7 +294,8 @@ const tilt = new THREE.Group();    // slight lean for a hero angle
 tilt.rotation.z = -0.06;
 tilt.add(pivot); scene.add(tilt);
 
-new GLTFLoader().load("assets/soully-can.glb", (gltf) => {
+// model ships as base64 text so it can be served from any static host
+const onModel = (gltf) => {
   const model = gltf.scene;
   model.traverse((o) => {
     if (o.isMesh) {
@@ -312,7 +313,16 @@ new GLTFLoader().load("assets/soully-can.glb", (gltf) => {
   const wrap = new THREE.Group(); wrap.add(model); wrap.scale.setScalar(s);
   pivot.add(wrap);
   loadingEl.hidden = true;
-}, undefined, () => { loadingEl.textContent = "Could not load the 3D can"; });
+};
+const failModel = () => { loadingEl.textContent = "Could not load the 3D can"; };
+fetch("assets/soully-can.glb.txt")
+  .then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); })
+  .then((b64) => {
+    const bin = atob(b64.trim()), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    new GLTFLoader().parse(bytes.buffer, "", onModel, failModel);
+  })
+  .catch(failModel);
 
 function resize() {
   const w = canvas.clientWidth, h = canvas.clientHeight;
