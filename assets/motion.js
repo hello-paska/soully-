@@ -62,7 +62,7 @@ document.querySelectorAll(".btn, [data-roll]").forEach((btn) => {
       const r = document.createElement("span"); r.className = "roll";
       r.innerHTML = `<span class="roll-in" data-t="${t.replace(/"/g, "&quot;")}">${t}</span>`;
       n.replaceWith(r);
-    } else if (n.nodeType === 1 && n.tagName === "svg") {
+    } else if (n.nodeType === 1 && n.tagName === "svg" && !n.classList.contains("ic")) {
       const w = document.createElement("span"); w.className = "roll-arr"; n.replaceWith(w); w.appendChild(n);
     }
   });
