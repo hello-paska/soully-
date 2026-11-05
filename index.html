@@ -154,6 +154,42 @@ a { color: inherit; }
 .spin-hint { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 3; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 8px; pointer-events: none; }
 .spin-hint svg { width: 14px; height: 14px; }
 
+/* Recipe section: full-bleed photo, then the formula */
+.recipe { background: var(--mist); }
+.recipe-photo { position: relative; overflow: hidden; height: clamp(320px, 42vw, 620px); background: #d9d2c3; }
+.recipe-photo picture, .recipe-photo img { display: block; width: 100%; height: 100%; max-width: 100%; }
+.recipe-photo img { object-fit: cover; object-position: 50% 45%; transform: scale(1.04); animation: drift 18s ease-in-out infinite alternate; }
+.recipe-photo figcaption {
+  position: absolute; left: max(28px, var(--gutter-l)); bottom: 22px;
+  font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--mist);
+  background: rgba(20,61,37,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  padding: 7px 12px; border-radius: 999px;
+}
+.recipe-body {
+  max-width: 920px; margin: 0 auto; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 22px;
+  padding-block: clamp(56px, 8vw, 104px); padding-left: max(28px, var(--gutter-l)); padding-right: max(28px, var(--gutter-r));
+}
+.recipe-body h2 {
+  margin: 0; font-family: var(--display); font-weight: 600; color: var(--matcha);
+  font-size: clamp(44px, 7vw, 92px); line-height: .95; letter-spacing: -.03em; text-wrap: balance;
+}
+.recipe-body h2 .plus { font-weight: 300; color: var(--matcha); opacity: .55; }
+.recipe-body .kicker { margin: 0; font-size: clamp(17px, 1.6vw, 20px); font-weight: 600; color: var(--matcha); text-wrap: balance; }
+.recipe-body .copy { margin: 0; max-width: 58ch; font-size: 16.5px; line-height: 1.75; color: var(--muted); text-wrap: pretty; }
+.formula { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 14px; margin: 10px 0 6px; padding: 0; list-style: none; }
+.formula li { display: flex; align-items: center; gap: 14px; }
+.formula .term {
+  font-size: 14px; font-weight: 500; color: var(--matcha-ink);
+  border: 1px solid var(--line); background: var(--cream); border-radius: 999px; padding: 9px 16px;
+}
+.formula .term.lead { background: var(--matcha); color: var(--mist); border-color: var(--matcha); }
+.formula .op { font-family: var(--display); font-size: 22px; color: var(--matcha); line-height: 1; }
+.btn-sage { background: var(--sage); border-color: var(--sage); color: var(--matcha-ink); padding: 18px 34px; }
+.btn-sage:hover { background: var(--matcha); border-color: var(--matcha); color: var(--mist); transform: translateY(-1px); }
+@keyframes drift { from { transform: scale(1.04) translateX(-1%); } to { transform: scale(1.1) translateX(1%); } }
+@media (prefers-reduced-motion: reduce) { .recipe-photo img { animation: none; } }
+
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes shadow { 0%,100% { transform: scaleX(1); opacity: 1; } 50% { transform: scaleX(.88); opacity: .75; } }
 
@@ -254,6 +290,29 @@ a { color: inherit; }
         <div><dt>Ingredients</dt><dd>4</dd></div>
         <div><dt>Pack from</dt><dd><small>CHF</small> 17.40</dd></div>
       </dl>
+    </div>
+  </section>
+
+  <section class="recipe" aria-labelledby="recipe-title">
+    <figure class="recipe-photo" style="margin:0">
+      <picture>
+        <source media="(max-width: 640px)" srcset="assets/cans-on-travertine-crop.webp">
+        <img src="assets/cans-on-travertine.webp" srcset="assets/cans-on-travertine-1200.webp 1200w, assets/cans-on-travertine.webp 2640w" sizes="100vw"
+             alt="Five Soully Matcha Soda cans lined up on a travertine table, a hand pointing at the first one" loading="lazy" width="2640" height="963">
+      </picture>
+      <figcaption>The Matcha Soda · 330 ml</figcaption>
+    </figure>
+    <div class="recipe-body">
+      <h2 id="recipe-title">Matcha <span class="plus">+</span> 3 ingredients</h2>
+      <p class="kicker">Soully follows the Japanese principle of perfecting simple things.</p>
+      <p class="copy">With just four carefully chosen ingredients, Soully stands for pure, unadulterated refreshment. No frills.</p>
+      <ol class="formula" aria-label="The four ingredients">
+        <li><span class="term lead">Matcha</span><span class="op" aria-hidden="true">+</span></li>
+        <li><span class="term">Lemon</span><span class="op" aria-hidden="true">+</span></li>
+        <li><span class="term">Agave</span><span class="op" aria-hidden="true">+</span></li>
+        <li><span class="term">Sparkling water</span></li>
+      </ol>
+      <a class="btn btn-sage" href="#top">Discover now</a>
     </div>
   </section>
 </main>
