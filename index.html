@@ -22,7 +22,8 @@
   --matcha: #1c5131;      /* brand deep green (drinksoully.com) */
   --matcha-ink: #143d25;
   --sage: #c4d9bf;        /* brand sage */
-  --cream: #eae8df;       /* brand cream */
+  --cream: #eae8df;
+  --leaf: #3a9431;       /* brand cream */
   --mist: #eff0f5;        /* brand off-white */
   --ink: #1c1c1c;
   --muted: #55605a;
@@ -158,12 +159,9 @@ a { color: inherit; }
   border-radius: 999px; padding: 16px 26px; border: 1px solid var(--matcha); display: inline-flex; align-items: center; gap: 10px;
   transition: transform .2s ease, background .2s ease, color .2s ease;
 }
-.btn-primary { background: var(--matcha); color: var(--mist); }
-.btn-primary { --fill: var(--matcha-ink); }
-.btn-primary:hover { transform: translateY(-1px); }
-.btn-ghost { background: transparent; color: var(--matcha); }
-.btn-ghost { --fill: var(--sage); }
-.btn-ghost:hover { border-color: var(--sage); }
+/* one button style site-wide: dark green, fills leaf green on hover, icon on the right */
+.btn, .btn-primary, .btn-ghost, .btn-sage { --fill: var(--leaf); background: var(--matcha); border-color: var(--matcha); color: var(--mist); }
+.btn:hover { border-color: var(--leaf); color: var(--mist); transform: translateY(-1px); }
 .btn svg { width: 16px; height: 16px; }
 .facts { display: flex; justify-content: flex-end; gap: 28px; margin: 0; }
 .facts div { text-align: right; }
@@ -206,9 +204,7 @@ a { color: inherit; }
 }
 .formula .term.lead { background: var(--matcha); color: var(--mist); border-color: var(--matcha); }
 .formula .op { font-family: var(--display); font-size: 22px; color: var(--matcha); line-height: 1; }
-.btn-sage { background: var(--sage); border-color: var(--sage); color: var(--matcha-ink); padding: 18px 34px; }
-.btn-sage { --fill: var(--matcha); transition: color .5s var(--ease-out, ease), transform .3s; }
-.btn-sage:hover { border-color: var(--matcha); color: var(--mist); transform: translateY(-1px); }
+.btn-sage { padding: 18px 34px; }
 @keyframes drift { from { transform: scale(1.04) translateX(-1%); } to { transform: scale(1.1) translateX(1%); } }
 @media (prefers-reduced-motion: reduce) { .recipe-photo img { animation: none; } }
 
@@ -316,7 +312,7 @@ a { color: inherit; }
         <a class="btn btn-primary" href="matcha-soda.html">Discover now
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <a class="btn btn-ghost" href="matcha-soda.html#others">Soully Zero</a>
+        <a class="btn btn-ghost" href="matcha-soda.html#others">Soully Zero <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </div>
       <dl class="facts">
         <div><dt class="sr-only">Price</dt><dd><small>CHF</small> 17.40</dd></div>
@@ -342,7 +338,7 @@ a { color: inherit; }
         <li><span class="term">Agave</span><span class="op" aria-hidden="true">+</span></li>
         <li><span class="term">Sparkling water</span></li>
       </ol>
-      <a class="btn btn-sage" href="matcha-soda.html" data-reveal style="--d:450ms">Discover Now</a>
+      <a class="btn btn-sage" href="matcha-soda.html" data-reveal style="--d:450ms">Discover Now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
     <div class="stripe-band recipe-stripes" aria-hidden="true"></div>
   </section>
