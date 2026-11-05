@@ -223,7 +223,7 @@ a { color: inherit; }
 }
 </style>
 
-<div class="announce">Now at <b>Migros</b> across Switzerland &nbsp;·&nbsp; Free delivery from CHF 50</div>
+<div class="announce">Now available nationwide in Switzerland at Coop</div>
 
 <header class="nav">
   <a class="logo" href="#top" aria-label="Soully home">soully</a>
@@ -232,8 +232,8 @@ a { color: inherit; }
       <li><a href="matcha-soda.html">Matcha Soda</a></li>
       <li><a href="#top">B2B Matcha Powder</a></li>
       <li><a href="#top">Branded Matcha</a></li>
-      <li><a href="#top">About</a></li>
-      <li><a href="#top">Where to find us</a></li>
+      <li><a href="#top">About us</a></li>
+      <li><a href="#top">Where you find Soully</a></li>
     </ul>
   </nav>
   <div class="nav-tools">
@@ -251,8 +251,7 @@ a { color: inherit; }
 <main id="top">
   <section class="hero" aria-labelledby="hero-title">
     <div class="eyebrow-row">
-      <span class="eyebrow">Clean formulation · 100% natural</span>
-      <span class="origin">Ceremonial-grade matcha · Made for Switzerland</span>
+      <span class="eyebrow">Clean Formulation | 100% natural</span>
     </div>
 
     <div class="stage">
@@ -263,32 +262,30 @@ a { color: inherit; }
         <span class="l2">Soda</span>
       </h1>
       <div class="shadow" aria-hidden="true"></div>
-      <span class="loading" id="loading">Loading can…</span>
+      <span class="loading" id="loading"></span>
       <canvas id="can" aria-label="Soully Matcha Soda can, rotating. Drag to spin." role="img"></canvas>
 
       <div class="ingredients" aria-label="Ingredients">
-        <div class="ing matcha"><i>01</i><span>Matcha<small>Stone-ground green tea</small></span></div>
-        <div class="ing lemon"><i>02</i><span>Lemon<small>A bright, clean finish</small></span></div>
-        <div class="ing agave"><i>03</i><span>Agave<small>Gently sweetened</small></span></div>
-        <div class="ing water"><i>04</i><span>Sparkling water<small>Crisp and light</small></span></div>
+        <div class="ing matcha"><i>01</i><span>Matcha</span></div>
+        <div class="ing lemon"><i>02</i><span>Lemon</span></div>
+        <div class="ing agave"><i>03</i><span>Agave</span></div>
+        <div class="ing water"><i>04</i><span>Sparkling water</span></div>
       </div>
       <div class="spin-hint" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2"/><path d="M18.5 2v4h-4M5.5 22v-4h4"/></svg>
-        Drag to spin
       </div>
     </div>
 
     <div class="hero-foot">
-      <p class="lede"><strong>Matcha plus three ingredients.</strong> Slow-release energy from matcha, without the coffee crash. Nothing else in the can.</p>
+      <p class="lede"><strong>Matcha + 3 Ingredients</strong><br>matcha, lemon, agave, and sparkling water</p>
       <div class="cta-group">
-        <a class="btn btn-primary" href="matcha-soda.html">Shop Matcha Soda
+        <a class="btn btn-primary" href="matcha-soda.html">Discover now
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <a class="btn btn-ghost" href="#top">Try Soully Zero</a>
+        <a class="btn btn-ghost" href="matcha-soda.html#others">Soully Zero</a>
       </div>
       <dl class="facts">
-        <div><dt>Ingredients</dt><dd>4</dd></div>
-        <div><dt>Pack from</dt><dd><small>CHF</small> 17.40</dd></div>
+        <div><dt>Regular price</dt><dd><small>CHF</small> 17.40</dd></div>
       </dl>
     </div>
   </section>
@@ -300,19 +297,18 @@ a { color: inherit; }
         <img src="assets/cans-on-travertine.webp" srcset="assets/cans-on-travertine-1200.webp 1200w, assets/cans-on-travertine.webp 2640w" sizes="100vw"
              alt="Five Soully Matcha Soda cans lined up on a travertine table, a hand pointing at the first one" loading="lazy" width="2640" height="963">
       </picture>
-      <figcaption>The Matcha Soda · 330 ml</figcaption>
     </figure>
     <div class="recipe-body">
-      <h2 id="recipe-title">Matcha <span class="plus">+</span> 3 ingredients</h2>
+      <h2 id="recipe-title">Matcha <span class="plus">+</span> 3 Ingredients</h2>
       <p class="kicker">Soully follows the Japanese principle of perfecting simple things.</p>
-      <p class="copy">With just four carefully chosen ingredients, Soully stands for pure, unadulterated refreshment. No frills.</p>
+      <p class="copy">With just four carefully selected ingredients – matcha, lemon, agave, and sparkling water – Soully stands for pure, unadulterated refreshment. No frills.</p>
       <ol class="formula" aria-label="The four ingredients">
         <li><span class="term lead">Matcha</span><span class="op" aria-hidden="true">+</span></li>
         <li><span class="term">Lemon</span><span class="op" aria-hidden="true">+</span></li>
         <li><span class="term">Agave</span><span class="op" aria-hidden="true">+</span></li>
         <li><span class="term">Sparkling water</span></li>
       </ol>
-      <a class="btn btn-sage" href="matcha-soda.html">Discover now</a>
+      <a class="btn btn-sage" href="matcha-soda.html">Discover Now</a>
     </div>
   </section>
 </main>
@@ -356,7 +352,7 @@ tilt.add(pivot); scene.add(tilt);
 
 pivot.add(createCan(renderer, {
   onLoad: () => { loadingEl.hidden = true; },
-  onError: () => { loadingEl.textContent = "Could not load the can label"; },
+  onError: () => {},
 }));
 
 function resize() {
