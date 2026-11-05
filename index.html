@@ -319,8 +319,8 @@ a { color: inherit; }
 
 <script type="importmap">
 { "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
 } }
 </script>
 <script type="module">
@@ -335,8 +335,8 @@ const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
+renderer.toneMapping = THREE.NeutralToneMapping;  // keeps the label greens true
+renderer.toneMappingExposure = 0.95;
 
 const scene = new THREE.Scene();
 const pmrem = new THREE.PMREMGenerator(renderer);
@@ -360,7 +360,8 @@ const onModel = (gltf) => {
   model.traverse((o) => {
     if (o.isMesh) {
       const m = o.material;
-      m.metalness = 0.35; m.roughness = 0.38; m.envMapIntensity = 0.9;
+      // keep the Blender materials (brushed aluminium + satin label), just tune reflections
+      m.envMapIntensity = m.metalness > 0.5 ? 1.1 : 0.45;
       if (m.map) m.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
     }
   });
@@ -369,7 +370,7 @@ const onModel = (gltf) => {
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
   model.position.sub(center);
-  const s = 2.0 / size.y;
+  const s = 2.05 / size.y;
   const wrap = new THREE.Group(); wrap.add(model); wrap.scale.setScalar(s);
   pivot.add(wrap);
   loadingEl.hidden = true;
