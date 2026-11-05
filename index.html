@@ -39,16 +39,21 @@ html, body { background: var(--cream); color: var(--ink); }
 body { margin: 0; font-family: var(--body); font-size: 15px; line-height: 1.5; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; }
 [hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--matcha); outline-offset: 3px; border-radius: 4px; }
 
 /* Announcement bar */
-.announce {
-  background: var(--matcha); color: var(--mist);
-  font-size: 12.5px; letter-spacing: .06em; text-align: center;
-  padding-block: 9px; padding-left: var(--gutter-l); padding-right: var(--gutter-r);
-}
-.announce b { font-weight: 600; }
+.announce { position: relative; background: var(--matcha); color: var(--mist); display: grid; grid-template-rows: 1fr; transition: grid-template-rows .6s var(--ease-out, ease); }
+.announce.closed { grid-template-rows: 0fr; }
+.announce > div { overflow: hidden; min-height: 0; }
+.announce-inner { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; font-size: 13px; letter-spacing: .04em; padding-block: 9px; padding-left: max(48px, var(--gutter-l)); padding-right: max(48px, var(--gutter-r)); text-align: center; }
+.announce-inner p { margin: 0; }
+.announce-cta { --fill: var(--mist); display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 14px; border-radius: 999px; background: var(--sage); color: var(--matcha-ink); font-size: 12px; font-weight: 600; letter-spacing: .04em; text-decoration: none; white-space: nowrap; }
+.announce-cta svg { width: 13px; height: 13px; }
+.announce-x { position: absolute; right: max(12px, var(--gutter-r)); top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 50%; border: 0; background: transparent; color: var(--mist); cursor: pointer; display: grid; place-items: center; transition: background .2s, transform .3s; }
+.announce-x:hover { background: rgba(239,240,245,.14); transform: translateY(-50%) rotate(90deg); }
+.announce.closed .announce-x { opacity: 0; pointer-events: none; }
 
 /* Header */
 .nav {
@@ -106,8 +111,9 @@ a { color: inherit; }
 
 .halo {
   position: absolute; width: min(560px, 74vw); aspect-ratio: 1; max-width: 100%;
-  border-radius: 50%; background: radial-gradient(circle at 50% 42%, var(--sage) 0%, rgba(196,217,191,.55) 46%, rgba(196,217,191,0) 70%);
-  z-index: 0;
+  border-radius: 50%; z-index: 0;
+  background: repeating-linear-gradient(90deg, rgba(58,148,49,.22) 0 16px, rgba(196,217,191,.35) 16px 30px);
+  -webkit-mask: radial-gradient(circle at 50% 45%, #000 0 40%, transparent 70%); mask: radial-gradient(circle at 50% 45%, #000 0 40%, transparent 70%);
 }
 .shadow {
   position: absolute; bottom: 6%; width: min(240px, 40vw); height: 30px; border-radius: 50%;
@@ -153,9 +159,11 @@ a { color: inherit; }
   transition: transform .2s ease, background .2s ease, color .2s ease;
 }
 .btn-primary { background: var(--matcha); color: var(--mist); }
-.btn-primary:hover { background: var(--matcha-ink); transform: translateY(-1px); }
+.btn-primary { --fill: var(--matcha-ink); }
+.btn-primary:hover { transform: translateY(-1px); }
 .btn-ghost { background: transparent; color: var(--matcha); }
-.btn-ghost:hover { background: var(--sage); border-color: var(--sage); }
+.btn-ghost { --fill: var(--sage); }
+.btn-ghost:hover { border-color: var(--sage); }
 .btn svg { width: 16px; height: 16px; }
 .facts { display: flex; justify-content: flex-end; gap: 28px; margin: 0; }
 .facts div { text-align: right; }
@@ -168,6 +176,7 @@ a { color: inherit; }
 
 /* Recipe section: full-bleed photo, then the formula */
 .recipe { background: var(--mist); }
+.recipe-stripes { --sc: #3a9431; --sh: clamp(110px, 14vw, 200px); }
 .recipe-photo { position: relative; overflow: hidden; height: clamp(320px, 42vw, 620px); background: #d9d2c3; }
 .recipe-photo picture, .recipe-photo img { display: block; width: 100%; height: 100%; max-width: 100%; }
 .recipe-photo img { object-fit: cover; object-position: 50% 45%; height: 124%; margin-top: -12%; transform: translate3d(0, var(--py, 0px), 0); }
@@ -198,7 +207,8 @@ a { color: inherit; }
 .formula .term.lead { background: var(--matcha); color: var(--mist); border-color: var(--matcha); }
 .formula .op { font-family: var(--display); font-size: 22px; color: var(--matcha); line-height: 1; }
 .btn-sage { background: var(--sage); border-color: var(--sage); color: var(--matcha-ink); padding: 18px 34px; }
-.btn-sage:hover { background: var(--matcha); border-color: var(--matcha); color: var(--mist); transform: translateY(-1px); }
+.btn-sage { --fill: var(--matcha); transition: color .5s var(--ease-out, ease), transform .3s; }
+.btn-sage:hover { border-color: var(--matcha); color: var(--mist); transform: translateY(-1px); }
 @keyframes drift { from { transform: scale(1.04) translateX(-1%); } to { transform: scale(1.1) translateX(1%); } }
 @media (prefers-reduced-motion: reduce) { .recipe-photo img { animation: none; } }
 
@@ -237,7 +247,17 @@ a { color: inherit; }
 </head>
 <body>
 
-<div class="announce">Now available nationwide in Switzerland at Coop</div>
+<div class="announce" id="announce" role="region" aria-label="Announcement">
+  <div>
+    <div class="announce-inner">
+      <p>From our very first can to the shelves of Migros &amp; Coop.</p>
+      <a class="announce-cta" href="matcha-soda.html#buy" data-roll>Shop Now <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+    <div class="stripe-edge" aria-hidden="true"></div>
+  </div>
+  <button class="announce-x" type="button" id="announceClose" aria-label="Close announcement"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+</div>
+<script>document.getElementById("announceClose").addEventListener("click", () => document.getElementById("announce").classList.add("closed"));</script>
 
 <header class="nav">
   <a class="logo" href="#top" aria-label="Soully home">soully</a>
@@ -299,7 +319,7 @@ a { color: inherit; }
         <a class="btn btn-ghost" href="matcha-soda.html#others">Soully Zero</a>
       </div>
       <dl class="facts">
-        <div><dt>Regular price</dt><dd><small>CHF</small> 17.40</dd></div>
+        <div><dt class="sr-only">Price</dt><dd><small>CHF</small> 17.40</dd></div>
       </dl>
     </div>
   </section>
@@ -324,6 +344,7 @@ a { color: inherit; }
       </ol>
       <a class="btn btn-sage" href="matcha-soda.html" data-reveal style="--d:450ms">Discover Now</a>
     </div>
+    <div class="stripe-band recipe-stripes" aria-hidden="true"></div>
   </section>
 </main>
 

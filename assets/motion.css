@@ -6,7 +6,7 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-stopped { overflow: hidden; }
 
-:root { --ease-out: cubic-bezier(.19, 1, .22, 1); }
+:root { --ease-out: cubic-bezier(.19, 1, .22, 1); --ease-io: cubic-bezier(.7, 0, .25, 1); }
 
 /* headlines: each word rises out of its own mask */
 [data-split] .w { display: inline-block; overflow: hidden; vertical-align: top; padding-block: .12em; margin-block: -.12em; }
@@ -31,4 +31,32 @@ html.lenis, html.lenis body { height: auto; }
 
 @media (prefers-reduced-motion: reduce) {
   .motion [data-split] .wi, .motion [data-reveal] { transition: none !important; transform: none !important; opacity: 1 !important; clip-path: none !important; }
+}
+
+/* ---------- buttons: label rolls like the scroll reveals, fill rises, arrow loops ---------- */
+.roll-btn { position: relative; overflow: hidden; isolation: isolate; }
+.roll-btn::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--fill, #143d25); transform: translate3d(0, 101%, 0); transition: transform .65s var(--ease-io); }
+.roll-btn:hover::before, .roll-btn:focus-visible::before { transform: none; }
+.roll { position: relative; display: inline-block; overflow: hidden; vertical-align: middle; line-height: 1.25; }
+.roll-in { position: relative; display: inline-block; transition: transform .65s var(--ease-io); }
+.roll-in::after { content: attr(data-t); position: absolute; left: 0; top: 100%; white-space: nowrap; transform: rotate(7deg); transform-origin: 0 0; transition: transform .65s var(--ease-io); }
+.roll-btn:hover .roll-in, .roll-btn:focus-visible .roll-in { transform: translate3d(0, -100%, 0); }
+.roll-btn:hover .roll-in::after, .roll-btn:focus-visible .roll-in::after { transform: none; }
+.roll-arr { display: inline-flex; overflow: hidden; }
+.roll-btn:hover .roll-arr svg { animation: arrLoop .8s var(--ease-out); }
+@keyframes arrLoop { 0% { transform: none; } 40% { transform: translateX(130%); } 41% { transform: translateX(-130%); } 100% { transform: none; } }
+
+/* ---------- the can's green lines, as a growing band ---------- */
+.stripe-band { --sw: 22px; --sg: 18px; --sc: #3a9431; display: flex; justify-content: center; gap: var(--sg); overflow: hidden; height: var(--sh, 120px); }
+.stripe-band i { flex: 0 0 var(--sw); background: var(--sc); transform-origin: 50% 100%; }
+.motion .stripe-band i { transform: scaleY(0); transition: transform 1.3s var(--ease-out); transition-delay: calc(var(--i) * 28ms); }
+.motion .stripe-band.in i { transform: none; }
+.stripe-band.top i { transform-origin: 50% 0; }
+/* a static thin stripe edge */
+.stripe-edge { height: 6px; background: repeating-linear-gradient(90deg, #3a9431 0 12px, #c7dcab 12px 22px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-btn::before, .roll-in, .roll-in::after { transition: none; }
+  .roll-btn:hover .roll-arr svg { animation: none; }
+  .motion .stripe-band i { transform: none !important; transition: none; }
 }

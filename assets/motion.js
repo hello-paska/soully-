@@ -42,11 +42,37 @@ function split(el) {
 }
 document.querySelectorAll("[data-split]").forEach(split);
 
+// ---- stripe bands: fill with as many lines as fit; they grow from the centre outwards ----
+function fillStripes(band) {
+  const cs = getComputedStyle(band), sw = parseFloat(cs.getPropertyValue("--sw")) || 22, sg = parseFloat(cs.getPropertyValue("--sg")) || 18;
+  const n = Math.ceil(band.clientWidth / (sw + sg)) + 1, mid = (n - 1) / 2;
+  band.innerHTML = Array.from({ length: n }, (_, k) => `<i style="--i:${Math.abs(k - mid).toFixed(0)}"></i>`).join("");
+}
+const bands = [...document.querySelectorAll(".stripe-band")];
+bands.forEach(fillStripes);
+let bandW = innerWidth;
+addEventListener("resize", () => { if (Math.abs(innerWidth - bandW) > 40) { bandW = innerWidth; bands.forEach(fillStripes); } });
+
+// ---- buttons: wrap label + arrow so hover can roll them ----
+document.querySelectorAll(".btn, [data-roll]").forEach((btn) => {
+  btn.classList.add("roll-btn");
+  [...btn.childNodes].forEach((n) => {
+    if (n.nodeType === 3 && n.textContent.trim()) {
+      const t = n.textContent.trim();
+      const r = document.createElement("span"); r.className = "roll";
+      r.innerHTML = `<span class="roll-in" data-t="${t.replace(/"/g, "&quot;")}">${t}</span>`;
+      n.replaceWith(r);
+    } else if (n.nodeType === 1 && n.tagName === "svg") {
+      const w = document.createElement("span"); w.className = "roll-arr"; n.replaceWith(w); w.appendChild(n);
+    }
+  });
+});
+
 // ---- reveal on scroll ----
 const io = new IntersectionObserver((entries) => {
   entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
 }, { rootMargin: "0px 0px -6% 0px", threshold: 0.08 });
-document.querySelectorAll("[data-split], [data-reveal]").forEach((el) => {
+document.querySelectorAll("[data-split], [data-reveal], .stripe-band").forEach((el) => {
   // anything already on screen at load plays its entrance right away
   if (el.getBoundingClientRect().top < innerHeight) requestAnimationFrame(() => el.classList.add("in"));
   else io.observe(el);
