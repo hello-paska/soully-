@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,600;1,8..60,500&display=swap">
+<style>
+/* 2400 x 1369 label units = 360deg around the can, seam at theta=+90deg.
+   front (theta 0) at x=1800, back (theta 180) at x=600 */
+html,body{margin:0;width:2400px;height:1369px;overflow:hidden}
+.label{position:relative;width:2400px;height:1369px;background:#c7dcab;overflow:hidden}
+.stripe{position:absolute;top:471px;height:782px;width:47.1px;background:#3a9431}
+.band{position:absolute;top:18px;height:56px;left:0;width:2400px}
+.cell{position:absolute;top:0;width:480px;height:56px;display:flex;align-items:center;justify-content:center;gap:16px;
+  font-family:"Source Serif 4",Georgia,serif;font-size:55px;line-height:1;white-space:nowrap}
+.cell .lemon{font-style:italic;font-weight:500;color:#d8bf1c}
+.cell .matcha{font-weight:600;color:#3a8a2c}
+.cell svg{width:34px;height:34px;margin-left:10px}
+.wordmark{position:absolute;left:1360px;top:103px;width:893px;height:365px}
+.flag{position:absolute;background:#e0393e;border-radius:3px}
+.flag::before,.flag::after{content:"";position:absolute;background:#fff;left:50%;top:50%;transform:translate(-50%,-50%)}
+.flag::before{width:58%;height:18%}.flag::after{width:18%;height:58%}
+.back{position:absolute;left:280px;top:93px;width:640px;height:1115px;mix-blend-mode:multiply}
+</style></head><body><div class="label" id="L"></div>
+<script>
+const L=document.getElementById('L');
+const xOf=th=>((((th-90)%360)+360)%360)/360*2400;
+// 28 stripes, centred on the front, none across the back panel
+for(let k=0;k<28;k++){const th=k*360/28; const d=Math.abs(((th-180+540)%360)-180); if(d<50) continue;
+  for(const off of [0,2400,-2400]){const s=document.createElement('div');s.className='stripe';s.style.left=(xOf(th)-23.55+off)+'px';L.appendChild(s);}}
+const sun='<svg viewBox="-20 -20 40 40"><g fill="#1d4a29"><circle r="6.2"/>'+Array.from({length:12},(_,i)=>`<rect x="-1.6" y="-17" width="3.2" height="7" rx="1.6" transform="rotate(${i*30})"/>`).join('')+'</g></svg>';
+const band=document.createElement('div');band.className='band';L.appendChild(band);
+for(let x=120-480;x<2400;x+=480){const c=document.createElement('div');c.className='cell';c.style.left=x+'px';
+  c.innerHTML='<span class="lemon">Lemon</span><span class="matcha">Matcha</span>'+sun;band.appendChild(c);}
+L.insertAdjacentHTML('beforeend','<img class="wordmark" src="wordmark_clean.png"><div class="flag" style="left:'+(1360+893*0.711)+'px;top:'+(103+365*0.815)+'px;width:'+(893*0.058)+'px;height:'+(893*0.058*0.62)+'px"></div><img class="back" src="backpanel.png">');
+</script></body></html>
