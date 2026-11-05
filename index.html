@@ -1,9 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
-<title>Soully Matcha Soda</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soully</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalnia:wght@200..700&family=Archivo:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/motion.css">
+<script>
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.documentElement.classList.add("motion");
+    setTimeout(() => { if (!window.__motionReady) document.documentElement.classList.remove("motion"); }, 2500);
+  }
+</script>
 <style>
 /* Layout: one product stage. Giant Kalnia headline sits behind the rotating can,
    ingredients flank it, price + CTA anchor the bottom edge. Single light brand look. */
@@ -26,7 +36,9 @@
 }
 *, *::before, *::after { box-sizing: border-box; }
 html, body { background: var(--cream); color: var(--ink); }
-body { font-family: var(--body); font-size: 15px; line-height: 1.5; overflow-x: hidden; }
+body { margin: 0; font-family: var(--body); font-size: 15px; line-height: 1.5; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--matcha); outline-offset: 3px; border-radius: 4px; }
 
@@ -158,7 +170,7 @@ a { color: inherit; }
 .recipe { background: var(--mist); }
 .recipe-photo { position: relative; overflow: hidden; height: clamp(320px, 42vw, 620px); background: #d9d2c3; }
 .recipe-photo picture, .recipe-photo img { display: block; width: 100%; height: 100%; max-width: 100%; }
-.recipe-photo img { object-fit: cover; object-position: 50% 45%; transform: scale(1.04); animation: drift 18s ease-in-out infinite alternate; }
+.recipe-photo img { object-fit: cover; object-position: 50% 45%; height: 124%; margin-top: -12%; transform: translate3d(0, var(--py, 0px), 0); }
 .recipe-photo figcaption {
   position: absolute; left: max(28px, var(--gutter-l)); bottom: 22px;
   font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--mist);
@@ -222,6 +234,8 @@ a { color: inherit; }
   .ing, .shadow { animation: none; }
 }
 </style>
+</head>
+<body>
 
 <div class="announce">Now available nationwide in Switzerland at Coop</div>
 
@@ -251,15 +265,15 @@ a { color: inherit; }
 <main id="top">
   <section class="hero" aria-labelledby="hero-title">
     <div class="eyebrow-row">
-      <span class="eyebrow">Clean Formulation | 100% natural</span>
+      <span class="eyebrow" data-reveal>Clean Formulation | 100% natural</span>
     </div>
 
     <div class="stage">
       <div class="halo" aria-hidden="true"></div>
       <h1 class="headline" id="hero-title">
         <span class="no1">The No. 1 Matcha Soda</span>
-        <span class="l1">Matcha</span>
-        <span class="l2">Soda</span>
+        <span class="l1" data-split>Matcha</span>
+        <span class="l2" data-split style="--d:180ms">Soda</span>
       </h1>
       <div class="shadow" aria-hidden="true"></div>
       <span class="loading" id="loading"></span>
@@ -276,7 +290,7 @@ a { color: inherit; }
       </div>
     </div>
 
-    <div class="hero-foot">
+    <div class="hero-foot" data-reveal style="--d:300ms">
       <p class="lede"><strong>Matcha + 3 Ingredients</strong><br>matcha, lemon, agave, and sparkling water</p>
       <div class="cta-group">
         <a class="btn btn-primary" href="matcha-soda.html">Discover now
@@ -291,24 +305,24 @@ a { color: inherit; }
   </section>
 
   <section class="recipe" aria-labelledby="recipe-title">
-    <figure class="recipe-photo" style="margin:0">
+    <figure class="recipe-photo" style="margin:0" data-reveal="mask">
       <picture>
         <source media="(max-width: 640px)" srcset="assets/cans-on-travertine-crop.webp">
         <img src="assets/cans-on-travertine.webp" srcset="assets/cans-on-travertine-1200.webp 1200w, assets/cans-on-travertine.webp 2640w" sizes="100vw"
-             alt="Five Soully Matcha Soda cans lined up on a travertine table, a hand pointing at the first one" loading="lazy" width="2640" height="963">
+             alt="Five Soully Matcha Soda cans lined up on a travertine table, a hand pointing at the first one" data-parallax="-0.12" loading="lazy" width="2640" height="963">
       </picture>
     </figure>
     <div class="recipe-body">
-      <h2 id="recipe-title">Matcha <span class="plus">+</span> 3 Ingredients</h2>
-      <p class="kicker">Soully follows the Japanese principle of perfecting simple things.</p>
-      <p class="copy">With just four carefully selected ingredients – matcha, lemon, agave, and sparkling water – Soully stands for pure, unadulterated refreshment. No frills.</p>
-      <ol class="formula" aria-label="The four ingredients">
+      <h2 id="recipe-title" data-split>Matcha <span class="plus">+</span> 3 Ingredients</h2>
+      <p class="kicker" data-reveal style="--d:150ms">Soully follows the Japanese principle of perfecting simple things.</p>
+      <p class="copy" data-reveal style="--d:250ms">With just four carefully selected ingredients – matcha, lemon, agave, and sparkling water – Soully stands for pure, unadulterated refreshment. No frills.</p>
+      <ol class="formula" aria-label="The four ingredients" data-reveal style="--d:350ms">
         <li><span class="term lead">Matcha</span><span class="op" aria-hidden="true">+</span></li>
         <li><span class="term">Lemon</span><span class="op" aria-hidden="true">+</span></li>
         <li><span class="term">Agave</span><span class="op" aria-hidden="true">+</span></li>
         <li><span class="term">Sparkling water</span></li>
       </ol>
-      <a class="btn btn-sage" href="matcha-soda.html">Discover Now</a>
+      <a class="btn btn-sage" href="matcha-soda.html" data-reveal style="--d:450ms">Discover Now</a>
     </div>
   </section>
 </main>
@@ -319,6 +333,7 @@ a { color: inherit; }
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
 } }
 </script>
+<script type="module" src="assets/motion.js"></script>
 <script type="module">
 import * as THREE from "three";
 import { createCan } from "./assets/soully-can.js";
@@ -391,3 +406,5 @@ renderer.setAnimationLoop(() => {
   renderer.render(scene, camera);
 });
 </script>
+</body>
+</html>

@@ -8,6 +8,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalnia:wght@200..700&family=Archivo:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/motion.css">
+<script>
+  // enable reveal animations only when motion is allowed; fall back to static if the motion script never loads
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.documentElement.classList.add("motion");
+    setTimeout(() => { if (!window.__motionReady) document.documentElement.classList.remove("motion"); }, 2500);
+  }
+</script>
 <style>
 /* Layout: a product detail page. Giant Kalnia title with the 3D can rising out of it on scroll,
    then diamond-framed copy, a ruled detail row, Why Matcha, a photo slider, other products,
@@ -127,30 +135,54 @@ button { font: inherit; color: inherit; }
 .intro .ingredients { font-size: 16.5px; color: var(--muted); }
 .intro .ingredients b { color: var(--matcha-ink); font-weight: 600; }
 
-/* ---------- detail row ---------- */
-.details { padding-bottom: clamp(70px, 9vw, 120px); }
-.detail-grid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; border-top: 1px solid var(--line); max-width: 1180px; margin: 0 auto; }
-.detail { padding: 26px 28px 8px; display: grid; align-content: start; gap: 12px; min-width: 0; }
-.detail + .detail { border-left: 1px solid var(--line); }
+/* ---------- shop: product switcher + gallery ---------- */
 .label { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-.detail p { margin: 0; font-size: 14.5px; color: var(--matcha-ink); line-height: 1.6; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { border: 1px solid var(--matcha); border-radius: 999px; padding: 6px 12px; font-size: 12.5px; font-weight: 500; color: var(--matcha); background: transparent; cursor: pointer; }
-.chip[aria-pressed="true"] { background: var(--matcha); color: var(--mist); }
-.facts { display: grid; grid-template-columns: 1fr auto; gap: 6px 18px; margin: 0; font-size: 14.5px; color: var(--matcha-ink); font-variant-numeric: tabular-nums; }
-.facts dt { color: var(--muted); }
-.facts dd { margin: 0; text-align: right; font-weight: 600; }
-.price { font-family: var(--body); font-size: 32px; line-height: 1; color: var(--matcha); font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.price small { font-family: var(--body); font-size: 13px; color: var(--muted); font-weight: 400; margin-right: 4px; }
-.buy { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.qty { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; height: 46px; }
-.qty button { width: 38px; height: 44px; border: 0; background: none; cursor: pointer; font-size: 18px; color: var(--matcha); border-radius: 999px; }
-.qty output { min-width: 22px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
-.btn { height: 46px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--matcha); background: var(--matcha); color: var(--mist); font-weight: 600; font-size: 14px; letter-spacing: .02em; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; transition: background .2s, transform .2s; }
-.btn:hover { background: var(--matcha-ink); transform: translateY(-1px); }
+.shop { padding-block: clamp(30px, 4vw, 50px) clamp(80px, 10vw, 140px); }
+.shop-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(28px, 5vw, 80px); align-items: start; max-width: 1240px; }
+.shop-media { display: grid; gap: 14px; min-width: 0; }
+.main-img { position: relative; aspect-ratio: 4 / 5; border-radius: 22px; overflow: hidden; background: var(--sage-soft); }
+.main-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .7s var(--ease-out, ease), transform 1.4s var(--ease-out, ease); }
+.main-img img.out { opacity: 0; transform: scale(1.06); }
+.main-nav { position: absolute; right: 16px; bottom: 16px; display: flex; gap: 8px; z-index: 2; }
+.main-nav button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(239,240,245,.86); color: var(--matcha); cursor: pointer; display: grid; place-items: center; backdrop-filter: blur(6px); transition: background .2s, transform .2s; }
+.main-nav button:hover { background: var(--mist); transform: scale(1.06); }
+.main-nav svg { width: 18px; height: 18px; }
+.main-count { position: absolute; left: 16px; bottom: 16px; z-index: 2; background: rgba(239,240,245,.86); color: var(--matcha); border-radius: 999px; padding: 7px 12px; font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .06em; backdrop-filter: blur(6px); }
+.thumbs { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+.thumb { padding: 0; border: 0; background: var(--sage-soft); border-radius: 12px; overflow: hidden; aspect-ratio: 1; cursor: pointer; position: relative; opacity: .55; transition: opacity .3s, transform .3s; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.thumb:hover { opacity: .85; }
+.thumb[aria-current="true"] { opacity: 1; box-shadow: inset 0 0 0 2px var(--matcha); }
+.thumb[aria-current="true"]::after { content: ""; position: absolute; inset: 0; border: 2px solid var(--matcha); border-radius: 12px; }
+.shop-info { position: sticky; top: 96px; display: grid; gap: 22px; min-width: 0; }
+.switch { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 5px; border-radius: 999px; background: var(--sage-soft); border: 1px solid var(--line); isolation: isolate; }
+.switch button { position: relative; z-index: 1; height: 46px; border: 0; background: none; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 14.5px; color: var(--matcha); transition: color .45s var(--ease-out, ease); }
+.switch button[aria-checked="true"] { color: var(--mist); }
+.switch-thumb { position: absolute; z-index: 0; top: 5px; bottom: 5px; left: 5px; width: calc(50% - 5px); border-radius: 999px; background: var(--matcha); transition: transform .6s var(--ease-out, ease); }
+.switch[data-on="zero"] .switch-thumb { transform: translateX(100%); }
+.swap { transition: opacity .35s ease, transform .5s var(--ease-out, ease); }
+.swap.out { opacity: 0; transform: translateY(10px); }
+.shop-name { margin: 0; font-family: var(--display); font-weight: 500; color: var(--matcha); font-size: clamp(44px, 5.2vw, 76px); line-height: .95; letter-spacing: -.025em; }
+.price-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-block: 16px; border-block: 1px solid var(--line); }
+.price { font-family: var(--body); font-size: 30px; line-height: 1; color: var(--matcha); font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.price small { font-size: 13px; color: var(--muted); font-weight: 400; margin-right: 4px; letter-spacing: 0; }
+.desc { display: grid; gap: 12px; color: var(--matcha-ink); font-size: 16px; line-height: 1.65; }
+.desc p { margin: 0; }
+.desc h3 { margin: 6px 0 0; font-family: var(--display); font-weight: 500; font-size: 24px; color: var(--matcha); letter-spacing: -.01em; }
+.tax { margin: 0; font-size: 13.5px; color: var(--muted); }
+.buy-row { display: grid; gap: 10px; }
+.buy { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.qty { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; height: 52px; }
+.qty button { width: 44px; height: 50px; border: 0; background: none; cursor: pointer; font-size: 18px; color: var(--matcha); border-radius: 999px; }
+.qty output { min-width: 24px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+.buy .btn { height: 52px; flex: 1; justify-content: center; min-width: 180px; }
+.btn { height: 46px; padding: 0 22px; border-radius: 999px; border: 1px solid var(--matcha); background: var(--matcha); color: var(--mist); font-weight: 600; font-size: 14px; letter-spacing: .02em; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; transition: background .2s, transform .3s var(--ease-out, ease); }
+.btn:hover { background: var(--matcha-ink); transform: translateY(-2px); }
+.btn.pop { animation: pop .5s var(--ease-out, ease); }
+@keyframes pop { 30% { transform: scale(.95); } 70% { transform: scale(1.03); } }
 .btn-light { background: var(--sage); border-color: var(--sage); color: var(--matcha-ink); }
 .btn-light:hover { background: var(--mist); border-color: var(--mist); }
-.toast { font-size: 12.5px; color: var(--leaf); min-height: 1.2em; margin: 0; }
+.toast { font-size: 13px; color: var(--leaf); min-height: 1.2em; margin: 0; font-weight: 600; }
 
 /* ---------- why matcha ---------- */
 .why { background: var(--sage); padding-block: clamp(70px, 9vw, 130px); }
@@ -165,43 +197,43 @@ button { font: inherit; color: inherit; }
 .why-item p { margin: 0; color: var(--matcha-ink); font-size: 16px; line-height: 1.65; max-width: 52ch; }
 .why .btn { margin-top: 32px; }
 
-/* ---------- photo slider ---------- */
+/* ---------- photo slider (centred slides, parallax images, inertia, infinite loop) ---------- */
 .gallery { padding-block: clamp(70px, 9vw, 120px) 0; position: relative; }
-.gallery-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 28px; }
-.gallery-head h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(30px, 3.4vw, 46px); color: var(--matcha); letter-spacing: -.02em; line-height: 1.05; }
-.arrows { display: flex; gap: 8px; }
-.arrow { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--matcha); background: transparent; color: var(--matcha); cursor: pointer; display: grid; place-items: center; }
+.gallery-head { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: clamp(24px, 3vw, 40px); }
+.gallery-head h2 { margin: 0; font-family: var(--display); font-weight: 500; font-size: clamp(40px, 5vw, 76px); color: var(--matcha); letter-spacing: -.025em; line-height: .95; text-transform: uppercase; }
+.g-ctrl { display: flex; align-items: center; gap: 14px; }
+.g-count { font-size: 13px; font-weight: 600; color: var(--matcha); letter-spacing: .08em; font-variant-numeric: tabular-nums; min-width: 64px; text-align: center; }
+.arrow { width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--matcha); background: transparent; color: var(--matcha); cursor: pointer; display: grid; place-items: center; transition: background .25s, color .25s, transform .3s var(--ease-out, ease); }
 .arrow:hover { background: var(--matcha); color: var(--mist); }
+.arrow:active { transform: scale(.92); }
 .arrow svg { width: 18px; height: 18px; }
-.track {
-  display: flex; gap: clamp(12px, 1.6vw, 22px); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-  padding-left: max(var(--gl), calc((100vw - var(--wrap)) / 2 + 20px)); padding-right: var(--gr); scroll-padding-left: max(var(--gl), calc((100vw - var(--wrap)) / 2 + 20px));
-  cursor: grab;
-}
-.track::-webkit-scrollbar { display: none; }
-.track.dragging { cursor: grabbing; scroll-snap-type: none; }
-.slide { flex: 0 0 clamp(260px, 34vw, 500px); scroll-snap-align: start; margin: 0; }
-.slide img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 18px; background: var(--sage-soft); user-select: none; -webkit-user-drag: none; pointer-events: none; }
-.slide figcaption { margin-top: 12px; font-size: 13px; color: var(--muted); }
-.drag-cursor { position: fixed; z-index: 30; left: 0; top: 0; pointer-events: none; padding: 9px 16px; border-radius: 999px; background: var(--matcha); color: var(--mist); font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; transform: translate(-50%, -50%) scale(0); transition: transform .2s ease; }
+.ps { --w: 61vw; --gap: 40px; position: relative; height: calc(var(--w) * 702 / 980); overflow: hidden; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.ps.dragging { cursor: grabbing; }
+.ps-slide { position: absolute; top: 0; left: 0; width: var(--w); height: 100%; margin: 0; border-radius: 22px; overflow: hidden; background: var(--sage-soft); will-change: transform; }
+.ps-img { position: absolute; top: 0; left: 50%; height: 100%; width: calc(100% + 32%); max-width: none; object-fit: cover; will-change: transform; transform: translate3d(-50%, 0, 0); pointer-events: none; -webkit-user-drag: none; }
+.ps-progress { max-width: var(--wrap); margin: 22px auto 0; padding-left: var(--gl); padding-right: var(--gr); }
+.ps-progress div { height: 2px; background: var(--line); position: relative; overflow: hidden; border-radius: 2px; }
+.ps-progress span { position: absolute; inset: 0 auto 0 0; width: 100%; background: var(--matcha); transform-origin: 0 50%; }
+.drag-cursor { position: fixed; z-index: 30; left: 0; top: 0; pointer-events: none; width: 84px; height: 84px; border-radius: 50%; background: var(--matcha); color: var(--mist); font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; display: grid; place-items: center; transform: translate(-50%, -50%) scale(0); transition: transform .35s var(--ease-out, ease); }
 .drag-cursor.show { transform: translate(-50%, -50%) scale(1); }
+.ps.dragging ~ .drag-cursor, .drag-cursor.press { transform: translate(-50%, -50%) scale(.82); }
 
-/* ---------- other products ---------- */
+/* ---------- discover now: real products ---------- */
 .others { padding-block: clamp(80px, 10vw, 140px); }
 .others h2 { margin: 0 0 clamp(36px, 5vw, 64px); text-align: center; font-family: var(--display); font-weight: 500; text-transform: uppercase; color: var(--matcha); font-size: clamp(48px, 8vw, 124px); line-height: .88; letter-spacing: -.025em; }
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 1.6vw, 22px); }
-.card { position: relative; display: grid; grid-template-rows: auto 1fr; border-radius: 20px; overflow: hidden; background: var(--sage-soft); text-decoration: none; color: var(--matcha-ink); min-width: 0; }
-.card-media { aspect-ratio: 1 / 1; overflow: hidden; display: grid; place-items: center; background: var(--sage); }
-.card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
-.card-media svg { width: 62%; height: auto; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
-.card:hover .card-media img, .card:hover .card-media svg { transform: scale(1.05); }
-.card-body { padding: 20px 22px 22px; display: grid; gap: 6px; align-content: start; }
-.card-body .label { color: var(--leaf); }
-.card-body h3 { margin: 0; font-family: var(--display); font-weight: 500; font-size: clamp(24px, 2.2vw, 30px); color: var(--matcha); letter-spacing: -.01em; }
-.card-body p { margin: 0; font-size: 14.5px; color: var(--muted); }
-.card-go { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13.5px; font-weight: 600; color: var(--matcha); }
-.card-go svg { width: 18px; height: 18px; transition: transform .3s; }
-.card:hover .card-go svg { transform: translateX(4px); }
+.card { position: relative; display: grid; grid-template-rows: auto 1fr; border-radius: 22px; overflow: hidden; background: var(--sage-soft); text-decoration: none; color: var(--matcha-ink); min-width: 0; }
+.card-media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--sage); }
+.card-media img { position: absolute; inset: -6% 0; width: 100%; height: 112%; object-fit: cover; transform: translate3d(0, var(--py, 0px), 0) scale(var(--s, 1)); transition: transform 1.2s var(--ease-out, ease), opacity .7s ease; }
+.card-media img.alt { opacity: 0; }
+.card:hover .card-media img { --s: 1.05; }
+.card:hover .card-media img.alt { opacity: 1; }
+.card-body { padding: 22px 24px 24px; display: grid; gap: 8px; align-content: start; }
+.card-body h3 { margin: 0; font-family: var(--display); font-weight: 500; font-size: clamp(24px, 2.2vw, 30px); color: var(--matcha); letter-spacing: -.01em; line-height: 1.1; }
+.card-body p { margin: 0; font-size: 14.5px; color: var(--muted); line-height: 1.55; }
+.card-go { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13.5px; font-weight: 600; color: var(--matcha); }
+.card-go svg { width: 18px; height: 18px; transition: transform .4s var(--ease-out, ease); }
+.card:hover .card-go svg { transform: translateX(6px); }
 
 /* ---------- footer ---------- */
 .footer { background: var(--matcha); color: var(--mist); padding-block: clamp(56px, 8vw, 100px) max(26px, env(safe-area-inset-bottom, 0px)); overflow: hidden; }
@@ -229,12 +261,13 @@ button { font: inherit; color: inherit; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 1000px) {
-  .detail-grid { grid-template-columns: 1fr 1fr; }
-  .detail:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); grid-column: 1 / -1; }
+  .shop-grid { grid-template-columns: 1fr; }
+  .shop-info { position: static; }
+  .ps { --w: 74vw; --gap: 24px; }
   .why .wrap { grid-template-columns: 1fr; }
   .cards { grid-template-columns: 1fr 1fr; }
   .cards .card:last-child { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; grid-template-rows: none; }
-  .cards .card:last-child .card-media { aspect-ratio: auto; min-height: 260px; }
+  .cards .card:last-child .card-media { aspect-ratio: auto; min-height: 320px; }
   .f-news { grid-template-columns: 1fr; }
   .f-grid { grid-template-columns: 1fr 1fr; }
 }
@@ -245,14 +278,15 @@ button { font: inherit; color: inherit; }
   .p-hero { height: 180vh; }
   .p-title { top: 64px; }
   .p-meta { padding-left: var(--gl); padding-right: var(--gr); font-size: 17px; bottom: 70px; }
-  .detail-grid { grid-template-columns: 1fr; }
-  .detail + .detail { border-left: 0; border-top: 1px solid var(--line); }
-  .detail { padding: 22px 4px 14px; }
+  .thumbs { grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .thumb { border-radius: 8px; }
+  .ps { --w: 84vw; --gap: 16px; }
+  .g-count { display: none; }
   .cards { grid-template-columns: 1fr; }
   .cards .card:last-child { grid-template-columns: none; grid-template-rows: auto 1fr; }
-  .cards .card:last-child .card-media { aspect-ratio: 1 / 1; min-height: 0; }
+  .cards .card:last-child .card-media { aspect-ratio: 4 / 5; min-height: 0; }
   .f-grid { grid-template-columns: 1fr; }
-  .gallery-head .arrows { display: none; }
+  .gallery-head .g-ctrl { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .menu { transition: none; }
@@ -302,7 +336,7 @@ button { font: inherit; color: inherit; }
   <!-- product hero -->
   <section class="p-hero" id="hero" aria-labelledby="p-title">
     <div class="p-stage">
-      <h1 class="p-title" id="p-title"><span class="sm">The No. 1</span><span>Matcha</span><span>Soda</span></h1>
+      <h1 class="p-title" id="p-title" data-split><span class="sm">The No. 1</span><span>Matcha</span><span>Soda</span></h1>
       <canvas id="can3d" role="img" aria-label="Soully Matcha Soda can, turning as you scroll"></canvas>
       <span class="can-status" id="canStatus"></span>
       <div class="p-meta">
@@ -316,30 +350,46 @@ button { font: inherit; color: inherit; }
   <!-- intro -->
   <section class="intro" aria-labelledby="intro-title">
     <div class="wrap">
-      <span class="diamond" aria-hidden="true"></span>
-      <h2 class="label" id="intro-title" style="margin:0">Matcha + 3 Ingredients</h2>
-      <p class="lead">Soully follows the Japanese principle of perfecting simple things.</p>
-      <p>With just four carefully selected ingredients – matcha, lemon, agave, and sparkling water – Soully stands for pure, unadulterated refreshment. No frills.</p>
-      <span class="diamond" aria-hidden="true"></span>
+      <span class="diamond" aria-hidden="true" data-reveal></span>
+      <h2 class="label" id="intro-title" style="margin:0" data-reveal>Matcha + 3 Ingredients</h2>
+      <p class="lead" data-split>Soully follows the Japanese principle of perfecting simple things.</p>
+      <p data-reveal style="--d:200ms">With just four carefully selected ingredients – matcha, lemon, agave, and sparkling water – Soully stands for pure, unadulterated refreshment. No frills.</p>
+      <span class="diamond" aria-hidden="true" data-reveal style="--d:300ms"></span>
     </div>
   </section>
 
   <!-- detail row -->
-  <section class="details" id="details" aria-label="Product details">
-    <div class="wrap">
-      <div class="detail-grid">
-        <div class="detail">
-          <div class="chips" role="group" aria-label="Product">
-            <button class="chip" type="button" aria-pressed="true" data-variant="Matcha Soda">Matcha Soda</button>
-            <button class="chip" type="button" aria-pressed="false" data-variant="Soully Zero">Soully Zero</button>
+  <section class="shop" id="buy" aria-labelledby="shop-title">
+    <div class="wrap shop-grid">
+      <div class="shop-media" data-reveal="mask">
+        <div class="main-img" id="mainImg">
+          <img id="imgA" src="assets/photos/cans-shadows.webp" alt="" width="1100" height="1100">
+          <img id="imgB" class="out" src="" alt="" width="1100" height="1100">
+          <span class="main-count" id="mainCount">01 / 07</span>
+          <div class="main-nav">
+            <button type="button" id="imgPrev" aria-label="Previous image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+            <button type="button" id="imgNext" aria-label="Next image"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
           </div>
         </div>
-        <div class="detail">
-          <span class="label">Regular price</span>
-          <div class="price"><small>CHF</small>17.40</div>
-          <p>Taxes included. Shipping calculated at checkout.</p>
+        <div class="thumbs" id="thumbs" aria-label="Product images"></div>
+      </div>
+
+      <div class="shop-info">
+        <div class="switch" id="switch" role="radiogroup" aria-label="Product" data-on="soda" data-reveal>
+          <span class="switch-thumb" aria-hidden="true"></span>
+          <button type="button" role="radio" aria-checked="true" data-p="soda">Matcha Soda</button>
+          <button type="button" role="radio" aria-checked="false" data-p="zero">Soully Zero</button>
         </div>
-        <div class="detail" id="buy">
+        <div class="swap" id="swap">
+          <h2 class="shop-name" id="shop-title">Matcha Soda</h2>
+        </div>
+        <div class="price-row" data-reveal style="--d:120ms">
+          <span class="label">Regular price</span>
+          <span class="price"><small>CHF</small><span id="price">17.40</span></span>
+        </div>
+        <div class="desc swap" id="desc"></div>
+        <p class="tax" data-reveal style="--d:200ms">Taxes included. Shipping calculated at checkout.</p>
+        <div class="buy-row" data-reveal style="--d:260ms">
           <span class="label">Quantity</span>
           <div class="buy">
             <div class="qty" aria-label="Quantity">
@@ -359,18 +409,18 @@ button { font: inherit; color: inherit; }
   <section class="why" id="why" aria-labelledby="why-title">
     <div class="wrap">
       <div>
-        <h2 id="why-title"><em>Why</em>Matcha?</h2>
+        <h2 id="why-title" data-split data-parallax="-0.08" style="transform:translate3d(0,var(--py,0px),0)"><em>Why</em> Matcha?</h2>
       </div>
       <div>
         <div class="why-list">
-          <div class="why-item">
+          <div class="why-item" data-reveal>
             <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M24 6c8 7 13 13 13 21a13 13 0 0 1-26 0c0-8 5-14 13-21Z"/><path d="M24 18v22M24 26l6-5M24 32l-6-5"/></svg>
             <div>
               <h3>Antioxidant Power</h3>
               <p>Matcha is packed with antioxidants that help your body neutralize free radicals and protect your cells. These little helpers strengthen your immune system and promote your overall well-being.</p>
             </div>
           </div>
-          <div class="why-item">
+          <div class="why-item" data-reveal style="--d:150ms">
             <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="24" cy="24" r="17"/><path d="M24 13v11l7 5"/><path d="M6 24h3M39 24h3M24 6v3"/></svg>
             <div>
               <h3>Healthy Energy Boost</h3>
@@ -378,7 +428,7 @@ button { font: inherit; color: inherit; }
             </div>
           </div>
         </div>
-        <a class="btn" href="#buy">To the Matcha Soda
+        <a class="btn" href="#buy" data-reveal style="--d:250ms">To the Matcha Soda
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
       </div>
@@ -388,65 +438,63 @@ button { font: inherit; color: inherit; }
   <!-- gallery -->
   <section class="gallery" aria-labelledby="gallery-title">
     <div class="wrap gallery-head">
-      <h2 id="gallery-title">Matcha Soda</h2>
-      <div class="arrows">
-        <button class="arrow" type="button" id="prev" aria-label="Previous photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
-        <button class="arrow" type="button" id="next" aria-label="Next photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <h2 id="gallery-title" data-split>Matcha Soda</h2>
+      <div class="g-ctrl" data-reveal>
+        <button class="arrow" type="button" id="prev" aria-label="Previous photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+        <span class="g-count" id="gCount">01 / 08</span>
+        <button class="arrow" type="button" id="next" aria-label="Next photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       </div>
     </div>
-    <div class="track" id="track" tabindex="0" aria-label="Photos, scroll sideways">
-      <figure class="slide"><img src="assets/photos/hand-sunlight.webp" alt="A hand holding a can of Soully Matcha Soda in morning sunlight" width="1100" height="1100"></figure>
-      <figure class="slide"><img src="assets/photos/pour-coupe.webp" alt="Soully poured into coupe glasses on a travertine table" width="1100" height="1100" loading="lazy"></figure>
-      <figure class="slide"><img src="assets/photos/ice-bucket.webp" alt="Soully cans on ice in a silver bucket with pink gerberas" width="1100" height="1100" loading="lazy"></figure>
-      <figure class="slide"><img src="assets/photos/cans-shadows.webp" alt="Soully cans standing on concrete with long shadows" width="1100" height="1100" loading="lazy"></figure>
-      <figure class="slide"><img src="assets/photos/street-style.webp" alt="A Soully can held against a green knit sleeve" width="1100" height="1100" loading="lazy"></figure>
-      <figure class="slide"><img src="assets/photos/glasses-flowers.webp" alt="Glasses of matcha soda with edible flowers" width="1100" height="1100" loading="lazy"></figure>
-      <figure class="slide"><img src="assets/photos/cup-holder.webp" alt="A Soully can in a cardboard cup holder on a metal bench" width="1100" height="1100" loading="lazy"></figure>
+    <div class="ps" id="ps" tabindex="0" role="group" aria-roledescription="carousel" aria-label="Photo gallery. Use the left and right arrow keys to browse." data-reveal>
+      <figure class="ps-slide"><img class="ps-img" src="assets/photos/pour-coupe.webp" alt="Soully poured into coupe glasses on a travertine table" width="1100" height="1100" draggable="false"></figure>
+      <figure class="ps-slide"><img class="ps-img" src="assets/photos/ice-bucket.webp" alt="Soully cans on ice in a silver bucket with pink gerberas" width="1100" height="1100" draggable="false"></figure>
+      <figure class="ps-slide"><img class="ps-img" src="assets/photos/glasses-flowers.webp" alt="Glasses of matcha soda with edible flowers" width="1100" height="1100" draggable="false"></figure>
+      <figure class="ps-slide"><img class="ps-img" src="assets/photos/zero-sky.webp" alt="Two hands toasting with Soully Zero cans against a blue sky" width="1100" height="1100" draggable="false"></figure>
+      <figure class="ps-slide"><img class="ps-img" src="assets/photos/cans-shadows.webp" alt="Soully cans standing on concrete with long shadows" width="1100" height="1100" draggable="false"></figure>
+      <figure class="ps-slide"><img class="ps-img" src="assets/photos/street-style.webp" alt="A Soully can held against a green knit sleeve" width="1100" height="1100" draggable="false"></figure>
+      <figure class="ps-slide"><img class="ps-img" src="assets/photos/hand-sunlight.webp" alt="A hand holding a can of Soully Matcha Soda in morning sunlight" width="1100" height="1100" draggable="false"></figure>
+      <figure class="ps-slide"><img class="ps-img" src="assets/photos/cup-holder.webp" alt="A Soully can in a cardboard cup holder on a metal bench" width="1100" height="1100" draggable="false"></figure>
     </div>
+    <div class="ps-progress" aria-hidden="true"><div><span id="gBar"></span></div></div>
+    <div class="drag-cursor" id="dragCursor" aria-hidden="true">←&nbsp;→</div>
   </section>
 
   <!-- other products -->
   <section class="others" id="others" aria-labelledby="others-title">
     <div class="wrap">
-      <h2 id="others-title">Discover<br>now</h2>
+      <h2 id="others-title" data-split>Discover<br>now</h2>
       <div class="cards">
-        <a class="card" href="#buy" data-pick="Soully Zero">
-          <div class="card-media"><img src="assets/photos/zero-lineup.webp" alt="Soully Zero cans lined up, a hand picking one up" loading="lazy" width="1040" height="1040"></div>
+        <a class="card" href="#others" data-reveal>
+          <div class="card-media">
+            <img src="assets/products/ceremonial-30g.webp" alt="Soully Ceremonial Grade Matcha 30 g pouch" loading="lazy" width="629" height="1100" data-parallax="-0.05">
+            <img class="alt" src="assets/products/ceremonial-30g-flatlay.webp" alt="" loading="lazy" width="768" height="944" data-parallax="-0.05">
+          </div>
           <div class="card-body">
-            <h3>Soully Zero</h3>
-            <p>Regular price CHF 17.40</p>
-            <div class="card-go"><span>View full details</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+            <h3>Soully Ceremonial Grade Matcha 30g</h3>
+            <p>Regular price CHF 29.90</p>
+            <div class="card-go"><span>View full details</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
           </div>
         </a>
-        <a class="card" href="#footer">
-          <div class="card-media" style="background:#b4cfad">
-            <svg viewBox="0 0 200 200" aria-hidden="true">
-              <ellipse cx="100" cy="150" rx="78" ry="16" fill="#1c5131" opacity=".14"/>
-              <path d="M30 104c0 34 31 54 70 54s70-20 70-54Z" fill="#eff0f5"/>
-              <ellipse cx="100" cy="104" rx="70" ry="17" fill="#e3e6dc"/>
-              <path d="M52 104c6-20 28-32 48-32s42 12 48 32c-14 7-30 10-48 10s-34-3-48-10Z" fill="#3a9431"/>
-              <path d="M70 92c8-9 19-13 30-13" stroke="#6fbf5f" stroke-width="4" stroke-linecap="round" fill="none"/>
-            </svg>
+        <a class="card" href="#others" data-reveal style="--d:120ms">
+          <div class="card-media">
+            <img src="assets/products/ceremonial-1kg.webp" alt="Soully 1 kg Ceremonial Grade Matcha bag next to a bamboo whisk" loading="lazy" width="803" height="1100" data-parallax="-0.05">
+            <img class="alt" src="assets/products/traditional-1kg.webp" alt="" loading="lazy" width="629" height="1100" data-parallax="-0.05">
           </div>
           <div class="card-body">
             <h3>B2B Matcha Powder</h3>
-            <div class="card-go"><span>Contact</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+            <p>New for B2B: Ceremonial Matcha now available in 1 kg units</p>
+            <div class="card-go"><span>Contact us for a sample!</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
           </div>
         </a>
-        <a class="card" href="#footer">
-          <div class="card-media" style="background:#1c5131">
-            <svg viewBox="0 0 200 200" aria-hidden="true">
-              <ellipse cx="100" cy="166" rx="52" ry="9" fill="#000" opacity=".25"/>
-              <rect x="56" y="48" width="88" height="116" rx="8" fill="#c4d9bf"/>
-              <rect x="52" y="38" width="96" height="22" rx="6" fill="#eff0f5"/>
-              <rect x="56" y="88" width="88" height="44" fill="#eff0f5"/>
-              <path d="M76 110h48" stroke="#1c5131" stroke-width="3" stroke-linecap="round"/>
-              <path d="M66 150h68" stroke="#1c5131" stroke-width="2" stroke-dasharray="3 5"/>
-            </svg>
+        <a class="card" href="#others" data-reveal style="--d:240ms">
+          <div class="card-media">
+            <img src="assets/products/branded-core.webp" alt="A hand holding a black branded matcha pouch" loading="lazy" width="825" height="1100" data-parallax="-0.05">
+            <img class="alt" src="assets/products/branded-pouches.webp" alt="" loading="lazy" width="619" height="1100" data-parallax="-0.05">
           </div>
           <div class="card-body">
             <h3>Branded Matcha</h3>
-            <div class="card-go"><span>Contact</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+            <p>We now offer branded matcha powder – perfect for Pilates studios, concept stores, cafes &amp; more.</p>
+            <div class="card-go"><span>Contact us for a sample!</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
           </div>
         </a>
       </div>
@@ -458,10 +506,10 @@ button { font: inherit; color: inherit; }
   <div class="wrap">
     <div class="f-news">
       <div>
-        <h2>Subscribe to our newsletter</h2>
+        <h2 data-split>Subscribe to our newsletter</h2>
         <p>Subscribe to our newsletter and stay up to date! Receive exclusive updates, exciting insights and special offers about Soully directly in your inbox.</p>
       </div>
-      <form class="news" id="newsForm" novalidate>
+      <form class="news" id="newsForm" novalidate data-reveal style="--d:200ms">
         <div class="news-form">
           <label class="sr-only" for="email">Email</label>
           <input id="email" name="email" type="email" placeholder="Email" autocomplete="email" required>
@@ -471,8 +519,8 @@ button { font: inherit; color: inherit; }
       </form>
     </div>
 
-    <div class="f-mark" role="img" aria-label="soully"></div>
-    <div class="f-tag"><span>The No. 1 Matcha Soda</span><span>Clean Formulation | 100% natural</span></div>
+    <div class="f-mark" role="img" aria-label="soully" data-reveal style="--d:100ms"></div>
+    <div class="f-tag" data-reveal style="--d:250ms"><span>The No. 1 Matcha Soda</span><span>Clean Formulation | 100% natural</span></div>
 
     <div class="f-grid">
       <div>
@@ -518,18 +566,21 @@ button { font: inherit; color: inherit; }
   </div>
 </footer>
 
-<div class="drag-cursor" id="dragCursor" aria-hidden="true">←&nbsp;&nbsp;→</div>
 
 <script>
-// ---- header shadow, menu, cart, variant chips, newsletter, slider ----
+// ---- header, menu, product switcher, cart, newsletter, photo slider ----
 (() => {
-  const header = document.getElementById("header");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = (id) => document.getElementById(id);
+
+  const header = $("header");
   addEventListener("scroll", () => header.classList.toggle("scrolled", scrollY > 8), { passive: true });
 
-  const menu = document.getElementById("menu"), openB = document.getElementById("menuOpen"), closeB = document.getElementById("menuClose");
+  // full-page menu
+  const menu = $("menu"), openB = $("menuOpen"), closeB = $("menuClose");
   const setMenu = (on) => {
-    if (on) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add("open")); closeB.focus(); }
-    else { menu.classList.remove("open"); setTimeout(() => { if (!menu.classList.contains("open")) menu.hidden = true; }, 650); openB.focus(); }
+    if (on) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add("open")); closeB.focus(); window.lenis && window.lenis.stop(); }
+    else { menu.classList.remove("open"); setTimeout(() => { if (!menu.classList.contains("open")) menu.hidden = true; }, 650); openB.focus(); window.lenis && window.lenis.start(); }
     openB.setAttribute("aria-expanded", on); document.body.style.overflow = on ? "hidden" : "";
   };
   openB.addEventListener("click", () => setMenu(true));
@@ -537,40 +588,172 @@ button { font: inherit; color: inherit; }
   menu.addEventListener("click", (e) => { if (e.target.closest("a")) setMenu(false); });
   addEventListener("keydown", (e) => { if (e.key === "Escape" && menu.classList.contains("open")) setMenu(false); });
 
-  // variant + quantity + add to cart
-  let variant = "Matcha Soda", qty = 1, cart = 0;
-  const chips = document.querySelectorAll(".chip[data-variant]");
-  const pick = (v) => { variant = v; chips.forEach((c) => c.setAttribute("aria-pressed", c.dataset.variant === v)); };
-  chips.forEach((c) => c.addEventListener("click", () => pick(c.dataset.variant)));
-  document.querySelectorAll("[data-pick]").forEach((a) => a.addEventListener("click", () => pick(a.dataset.pick)));
-  const qOut = document.getElementById("qty");
-  document.getElementById("qMinus").addEventListener("click", () => { qty = Math.max(1, qty - 1); qOut.textContent = qty; });
-  document.getElementById("qPlus").addEventListener("click", () => { qty = Math.min(20, qty + 1); qOut.textContent = qty; });
-  const toast = document.getElementById("toast"), count = document.getElementById("cartCount");
-  document.getElementById("addToCart").addEventListener("click", () => {
-    cart += qty; count.textContent = cart;
-    toast.textContent = `(${cart} in cart)`;
+  // ---------- products (copy and images from drinksoully.com) ----------
+  const P = {
+    soda: {
+      name: "Matcha Soda", price: "17.40",
+      desc: "<p>Made with matcha and just three simple ingredients, this soda is pure refreshment, no bullsh!t. Soully gives you the boost you need.</p>",
+      imgs: [
+        ["assets/photos/cans-shadows.webp", "Soully cans standing on concrete with long shadows"],
+        ["assets/photos/pour-coupe.webp", "Soully poured into coupe glasses on a travertine table"],
+        ["assets/photos/hand-sunlight.webp", "A hand holding a can of Soully Matcha Soda in morning sunlight"],
+        ["assets/photos/ice-bucket.webp", "Soully cans on ice in a silver bucket with pink gerberas"],
+        ["assets/photos/street-style.webp", "A Soully can held against a green knit sleeve"],
+        ["assets/photos/glasses-flowers.webp", "Glasses of matcha soda with edible flowers"],
+        ["assets/photos/cup-holder.webp", "A Soully can in a cardboard cup holder on a metal bench"],
+      ],
+    },
+    zero: {
+      name: "Soully Zero", price: "17.40",
+      desc: "<p>Our first ZERO drink without E-numbers. Sparkling matcha with lemon, sweetened only with an infusion of whole stevia leaves.</p>" +
+            "<h3>Zero. But different.</h3>" +
+            "<p>Most zero drinks come from a lab: artificial sweeteners, isolated extracts, and flavorings to top it off. We wanted the opposite. Soully ZERO is as simple as a drink can be. No E-numbers, no artificial flavors, no long list of ingredients.</p>",
+      imgs: [
+        ["assets/products/zero-crate.webp", "A green crate full of Soully Zero cans"],
+        ["assets/photos/zero-sky.webp", "Two hands toasting with Soully Zero cans against a blue sky"],
+        ["assets/photos/zero-basket.webp", "Soully Zero cans in a wire basket"],
+        ["assets/photos/zero-lineup.webp", "Soully Zero cans lined up, a hand picking one up"],
+      ],
+    },
+  };
+  let cur = "soda", idx = 0, front = $("imgA"), back = $("imgB");
+  const thumbs = $("thumbs"), count = $("mainCount");
+  const pad = (n) => String(n).padStart(2, "0");
+
+  function showImg(n, instant) {
+    const list = P[cur].imgs;
+    idx = (n + list.length) % list.length;
+    const [src, alt] = list[idx];
+    count.textContent = `${pad(idx + 1)} / ${pad(list.length)}`;
+    thumbs.querySelectorAll(".thumb").forEach((t, k) => t.setAttribute("aria-current", k === idx));
+    if (instant || reduce) { front.src = src; front.alt = alt; return; }
+    back.src = src; back.alt = alt;
+    const swap = () => { back.classList.remove("out"); front.classList.add("out"); [front, back] = [back, front]; };
+    back.complete && back.naturalWidth ? requestAnimationFrame(swap) : back.addEventListener("load", swap, { once: true });
+  }
+  function buildThumbs() {
+    thumbs.innerHTML = "";
+    P[cur].imgs.forEach(([src], k) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "thumb"; b.setAttribute("aria-label", `Image ${k + 1}`);
+      b.innerHTML = `<img src="${src}" alt="" loading="lazy">`;
+      b.addEventListener("click", () => showImg(k));
+      thumbs.appendChild(b);
+    });
+  }
+  const swapEls = [$("swap"), $("desc")];
+  function setProduct(key, instant) {
+    if (key === cur && !instant) return;
+    cur = key;
+    $("switch").dataset.on = key;
+    document.querySelectorAll("#switch [role=radio]").forEach((b) => b.setAttribute("aria-checked", b.dataset.p === key));
+    const fill = () => {
+      $("shop-title").textContent = P[key].name;
+      $("price").textContent = P[key].price;
+      $("desc").innerHTML = P[key].desc;
+      $("addToCart").dataset.p = key;
+      $("toast").textContent = cart[key] ? `(${cart[key]} in cart)` : "";
+      buildThumbs(); showImg(0, instant);
+    };
+    if (instant || reduce) { fill(); return; }
+    swapEls.forEach((el) => el.classList.add("out"));
+    setTimeout(() => { fill(); requestAnimationFrame(() => swapEls.forEach((el) => el.classList.remove("out"))); }, 260);
+  }
+  document.querySelectorAll("#switch [role=radio]").forEach((b) => {
+    b.addEventListener("click", () => setProduct(b.dataset.p));
+    b.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") { const k = cur === "soda" ? "zero" : "soda"; setProduct(k); document.querySelector(`#switch [data-p=${k}]`).focus(); }
+    });
   });
+  $("imgPrev").addEventListener("click", () => showImg(idx - 1));
+  $("imgNext").addEventListener("click", () => showImg(idx + 1));
+
+  // quantity + cart
+  let qty = 1, total = 0; const cart = { soda: 0, zero: 0 };
+  $("qMinus").addEventListener("click", () => { qty = Math.max(1, qty - 1); $("qty").textContent = qty; });
+  $("qPlus").addEventListener("click", () => { qty = Math.min(20, qty + 1); $("qty").textContent = qty; });
+  $("addToCart").addEventListener("click", (e) => {
+    cart[cur] += qty; total += qty; $("cartCount").textContent = total;
+    $("toast").textContent = `(${cart[cur]} in cart)`;
+    const b = e.currentTarget; b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop");
+  });
+  setProduct("soda", true);
 
   // newsletter (prototype: nothing is sent)
-  const form = document.getElementById("newsForm");
-  form.addEventListener("submit", (e) => { e.preventDefault(); });
+  $("newsForm").addEventListener("submit", (e) => e.preventDefault());
 
-  // slider: arrows, drag-to-scroll, drag cursor
-  const track = document.getElementById("track");
-  const stepBy = () => track.querySelector(".slide").getBoundingClientRect().width + 20;
-  document.getElementById("prev").addEventListener("click", () => track.scrollBy({ left: -stepBy(), behavior: "smooth" }));
-  document.getElementById("next").addEventListener("click", () => track.scrollBy({ left: stepBy(), behavior: "smooth" }));
-  let down = false, sx = 0, sl = 0;
-  track.addEventListener("pointerdown", (e) => { if (e.pointerType !== "mouse") return; down = true; sx = e.clientX; sl = track.scrollLeft; track.classList.add("dragging"); });
-  addEventListener("pointermove", (e) => { if (down) track.scrollLeft = sl - (e.clientX - sx); });
-  addEventListener("pointerup", () => { if (!down) return; down = false; track.classList.remove("dragging");
-    const w = stepBy(); track.scrollTo({ left: Math.round(track.scrollLeft / w) * w, behavior: "smooth" }); });
-  const cur = document.getElementById("dragCursor");
+  // ---------- photo slider: centred slides, parallax images, inertia, infinite loop ----------
+  const ps = $("ps"), slides = [...ps.querySelectorAll(".ps-slide")], imgs = slides.map((s) => s.querySelector(".ps-img"));
+  const N = slides.length, gCount = $("gCount"), gBar = $("gBar");
+  let pos = 0, target = 0, dragging = false, startX = 0, startT = 0, lastX = 0, lastTime = 0, vel = 0, moved = 0;
+  let W = 0, G = 0, VW = 0;
+  const measure = () => { VW = ps.clientWidth; W = slides[0].offsetWidth; G = parseFloat(getComputedStyle(ps).getPropertyValue("--gap")) || 40; };
+  measure(); addEventListener("resize", measure);
+  const wrap = (x) => ((x % N) + N + N / 2) % N - N / 2;      // -N/2 .. N/2
+  function render() {
+    const step = W + G, centre = (VW - W) / 2, bleed = W * 0.16;
+    slides.forEach((s, i) => {
+      const off = wrap(i - pos);
+      s.style.transform = `translate3d(${(centre + off * step).toFixed(2)}px,0,0)`;
+      const k = Math.max(-1.4, Math.min(1.4, off));
+      imgs[i].style.transform = `translate3d(calc(-50% + ${(-k * bleed).toFixed(2)}px),0,0) scale(${(1 + Math.min(Math.abs(off), 1) * 0.06).toFixed(4)})`;
+    });
+    const active = ((Math.round(pos) % N) + N) % N;
+    gCount.textContent = `${pad(active + 1)} / ${pad(N)}`;
+    gBar.style.transform = `scaleX(${((((pos % N) + N) % N) + 1) / N})`;
+  }
+  let prev = performance.now();
+  (function tick(now) {
+    const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
+    if (!dragging) pos += (target - pos) * (reduce ? 1 : 1 - Math.exp(-dt * 7));
+    if (Math.abs(target - pos) < 0.0005) pos = target;
+    render();
+    requestAnimationFrame(tick);
+  })(prev);
+  const go = (d) => { target = Math.round(target) + d; };
+  $("prev").addEventListener("click", () => go(-1));
+  $("next").addEventListener("click", () => go(1));
+  ps.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") { go(1); e.preventDefault(); } if (e.key === "ArrowLeft") { go(-1); e.preventDefault(); } });
+
+  ps.addEventListener("pointerdown", (e) => {
+    dragging = true; moved = 0; startX = lastX = e.clientX; startT = pos; lastTime = performance.now(); vel = 0;
+    ps.setPointerCapture(e.pointerId); ps.classList.add("dragging"); cursor.classList.add("press");
+  });
+  ps.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const now = performance.now(), dx = e.clientX - lastX, dt = Math.max(1, now - lastTime) / 1000;
+    vel = 0.8 * vel + 0.2 * (-dx / (W + G) / dt);
+    lastX = e.clientX; lastTime = now; moved += Math.abs(dx);
+    pos = startT - (e.clientX - startX) / (W + G); target = pos;
+  });
+  const release = (e) => {
+    if (!dragging) return;
+    dragging = false; ps.classList.remove("dragging"); cursor.classList.remove("press");
+    if (moved < 6) {                                   // a click on a side slide brings it to the centre
+      const r = ps.getBoundingClientRect(), x = e.clientX - r.left, centre = r.width / 2;
+      if (Math.abs(x - centre) > W / 2) { go(x > centre ? 1 : -1); return; }
+    }
+    target = Math.round(pos + Math.max(-2, Math.min(2, vel * 0.22)));
+  };
+  ps.addEventListener("pointerup", release); ps.addEventListener("pointercancel", release);
+
+  // trackpad sideways swipes
+  let wheelT;
+  ps.addEventListener("wheel", (e) => {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    e.preventDefault(); e.stopPropagation();
+    target += e.deltaX / (W + G) * 0.9; pos += (target - pos) * 0.5;
+    clearTimeout(wheelT); wheelT = setTimeout(() => { target = Math.round(target); }, 120);
+  }, { passive: false });
+
+  // round "drag" cursor that follows the pointer over the slider
+  const cursor = $("dragCursor");
   if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
-    track.addEventListener("pointerenter", () => cur.classList.add("show"));
-    track.addEventListener("pointerleave", () => cur.classList.remove("show"));
-    track.addEventListener("pointermove", (e) => { cur.style.left = e.clientX + "px"; cur.style.top = e.clientY + "px"; });
+    let cx = 0, cy = 0, tx = 0, ty = 0;
+    ps.addEventListener("pointerenter", () => cursor.classList.add("show"));
+    ps.addEventListener("pointerleave", () => cursor.classList.remove("show"));
+    ps.addEventListener("pointermove", (e) => { tx = e.clientX; ty = e.clientY; });
+    (function follow() { cx += (tx - cx) * 0.22; cy += (ty - cy) * 0.22; cursor.style.left = cx + "px"; cursor.style.top = cy + "px"; requestAnimationFrame(follow); })();
   }
 })();
 </script>
@@ -581,6 +764,7 @@ button { font: inherit; color: inherit; }
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
 } }
 </script>
+<script type="module" src="assets/motion.js"></script>
 <script type="module">
 // ---- the can rises out of the title and turns as you scroll ----
 import * as THREE from "three";
